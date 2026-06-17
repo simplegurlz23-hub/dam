@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadir Hero - Sistem Kehadiran Gamifikasi</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 pb-12">
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8">
+            <div class="text-center mb-8">
+                <i class="fa-solid fa-trophy text-yellow-400 text-4xl mb-3"></i>
+                <h1 class="font-bold text-2xl text-slate-900">HADIR HERO</h1>
+                <p class="text-sm text-slate-500 mt-2">Sistem Kehadiran Gamifikasi</p>
+            </div>
+
+            <div id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Username</label>
+                    <input type="text" id="loginUsername" placeholder="Masukkan username anda" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Kata Laluan</label>
+                    <input type="password" id="loginPassword" placeholder="Masukkan kata laluan anda" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <button onclick="handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all mb-3">
+                    Log Masuk
+                </button>
+
+                <button onclick="showRegisterForm()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg transition-all">
+                    Daftar Akaun Baru
+                </button>
+
+                <div id="loginError" class="hidden mt-3 p-3 bg-red-100 border border-red-300 text-red-700 text-sm rounded-lg"></div>
+            </div>
+
+            <div id="registerForm" class="hidden">
+                <div class="mb-3">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Penuh</label>
+                    <input type="text" id="regName" placeholder="Nama anda" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-3">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Kelas</label>
+                    <input type="text" id="regClass" placeholder="Contoh: 5 Cemerlang" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-3">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Username</label>
+                    <input type="text" id="regUsername" placeholder="Pilih username" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-3">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Kata Laluan</label>
+                    <input type="password" id="regPassword" placeholder="Buat kata laluan" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <button onclick="handleRegister()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition-all mb-2">
+                    Daftar
+                </button>
+
+                <button onclick="showLoginForm()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg transition-all">
+                    Kembali
+                </button>
+
+                <div id="regError" class="hidden mt-3 p-3 bg-red-100 border border-red-300 text-red-700 text-sm rounded-lg"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboardScreen" class="hidden">
+        <header class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
+            <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-trophy text-yellow-300 text-2xl animate-bounce"></i>
+                    <span class="font-bold text-xl tracking-wide">HADIR HERO</span>
+                </div>
+                <button onclick="handleLogout()" class="text-xs bg-red-600 hover:bg-red-700 px-3 py-1 rounded-full">
+                    Log Keluar
+                </button>
+            </div>
+        </header>
+
+        <main class="max-w-md mx-auto px-4 mt-6 space-y-6">
+
+            <!-- Profile Section -->
+            <section class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 bg-gradient-to-tr from-blue-400 to-green-400 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-inner">
+                        <span id="studentInitials">MH</span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="font-bold text-lg text-slate-900" id="studentName">Muhammad Harith</h2>
+                        <p class="text-sm text-slate-500" id="studentClass">Kelas: 5 Cemerlang</p>
+                        <p class="text-xs text-slate-400" id="studentId">ID: MY-99231</p>
+                    </div>
+                    <div class="text-center bg-amber-50 border border-amber-200 p-3 rounded-xl min-w-[80px]">
+                        <i class="fa-solid fa-star text-amber-500 text-lg mb-1"></i>
+                        <p class="text-xs text-amber-700 font-medium uppercase tracking-wider">Mata</p>
+                        <p class="text-xl font-black text-amber-600" id="totalPoints">120</p>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                    <div class="flex justify-between text-xs text-slate-500 mb-1">
+                        <span>Streak Hari Ini:</span>
+                        <span id="streakText">0 Hari</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-emerald-500 h-full rounded-full transition-all duration-500" id="streakBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- QR Scanner Section -->
+            <section class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-5 shadow-lg">
+                <div class="flex items-center space-x-2 mb-3">
+                    <i class="fa-solid fa-qrcode text-green-400"></i>
+                    <h3 class="font-bold text-sm uppercase tracking-wider text-slate-300">Imbas QR Code Kehadiran</h3>
+                </div>
+                <p class="text-xs text-slate-400 mb-4">Gunakan kamera anda untuk mengimbas QR Code kehadiran yang disediakan oleh guru.</p>
+                
+                <button onclick="openQRScanner()" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] transition-all text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-md shadow-emerald-900/30">
+                    <i class="fa-solid fa-camera"></i>
+                    <span>Buka Imbas QR</span>
+                </button>
+
+                <div id="scanFeedback" class="mt-3 text-center text-sm font-semibold hidden p-2 rounded-lg"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- QR Scanner Modal -->
+    <div id="qrModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-slate-900">Imbas QR Code</h3>
+                <button onclick="closeQRScanner()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <video id="qrVideo" class="w-full rounded-lg bg-slate-900" playsinline></video>
+            </div>
+
+            <canvas id="qrCanvas" class="hidden"></canvas>
+
+            <div id="qrResult" class="hidden text-center p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                <i class="fa-solid fa-check-circle text-emerald-500 text-2xl mb-2"></i>
+                <p class="text-sm text-emerald-700 font-semibold">QR Code Berjaya Diimbas!</p>
+                <p class="text-xs text-emerald-600 mt-1" id="resultText"></p>
+            </div>
+
+            <button onclick="closeQRScanner()" class="w-full mt-4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let currentStudent = null;
+        let qrStream = null;
+        let scanningActive = false;
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedStudent = localStorage.getItem('currentStudent');
+            if (savedStudent) {
+                currentStudent = JSON.parse(savedStudent);
+                loadDashboard();
+            }
+        });
+
+        // Login
+        async function handleLogin() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            if (!username || !password) {
+                errorDiv.textContent = 'Sila isi semua medan';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    errorDiv.textContent = data.error || 'Login gagal';
+                    errorDiv.classList.remove('hidden');
+                    return;
+                }
+
+                currentStudent = data.student;
+                localStorage.setItem('currentStudent', JSON.stringify(currentStudent));
+                loadDashboard();
+            } catch (err) {
+                errorDiv.textContent = 'Ralat rangkaian: ' + err.message;
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        // Register
+        async function handleRegister() {
+            const name = document.getElementById('regName').value;
+            const studentClass = document.getElementById('regClass').value;
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const errorDiv = document.getElementById('regError');
+
+            if (!name || !studentClass || !username || !password) {
+                errorDiv.textContent = 'Sila isi semua medan';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        class: studentClass,
+                        username,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    errorDiv.textContent = data.error || 'Pendaftaran gagal';
+                    errorDiv.classList.remove('hidden');
+                    return;
+                }
+
+                errorDiv.classList.add('hidden');
+                alert('Pendaftaran berjaya! Sila log masuk.');
+                showLoginForm();
+                document.getElementById('loginUsername').value = username;
+            } catch (err) {
+                errorDiv.textContent = 'Ralat rangkaian: ' + err.message;
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        // Load Dashboard
+        function loadDashboard() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.remove('hidden');
+
+            const initials = currentStudent.name
+                .split(' ')
+                .map(n => n[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+
+            document.getElementById('studentInitials').textContent = initials;
+            document.getElementById('studentName').textContent = currentStudent.name;
+            document.getElementById('studentClass').textContent = `Kelas: ${currentStudent.class}`;
+            document.getElementById('totalPoints').textContent = currentStudent.points;
+            document.getElementById('streakText').textContent = currentStudent.streak + ' Hari';
+            document.getElementById('streakBar').style.width = Math.min(currentStudent.streak * 10, 100) + '%';
+        }
+
+        // QR Scanner
+        async function openQRScanner() {
+            const modal = document.getElementById('qrModal');
+            const video = document.getElementById('qrVideo');
+            const resultDiv = document.getElementById('qrResult');
+            
+            modal.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+            scanningActive = true;
+
+            try {
+                qrStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                });
+                video.srcObject = qrStream;
+                video.play();
+                scanQRCode();
+            } catch (err) {
+                alert('Tidak dapat mengakses kamera. Sila pastikan anda memberi kebenaran akses kamera.');
+                closeQRScanner();
+            }
+        }
+
+        function closeQRScanner() {
+            const modal = document.getElementById('qrModal');
+            const video = document.getElementById('qrVideo');
+            
+            scanningActive = false;
+            modal.classList.add('hidden');
+
+            if (qrStream) {
+                qrStream.getTracks().forEach(track => track.stop());
+                qrStream = null;
+            }
+            video.pause();
+        }
+
+        function scanQRCode() {
+            const video = document.getElementById('qrVideo');
+            const canvas = document.getElementById('qrCanvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            const scanFrame = () => {
+                if (!scanningActive) return;
+
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                if (code) {
+                    handleQRResult(code.data);
+                    scanningActive = false;
+                } else {
+                    requestAnimationFrame(scanFrame);
+                }
+            };
+
+            requestAnimationFrame(scanFrame);
+        }
+
+        async function handleQRResult(qrData) {
+            const resultDiv = document.getElementById('qrResult');
+            const resultText = document.getElementById('resultText');
+            const video = document.getElementById('qrVideo');
+            
+            video.pause();
+
+            try {
+                const response = await fetch(`${API_URL}/scan-qr`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        student_id: currentStudent.id,
+                        qr_code: qrData
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    resultDiv.classList.add('hidden');
+                    showFeedback(data.error || 'Imbasan gagal', 'error');
+                    return;
+                }
+
+                resultDiv.classList.remove('hidden');
+                resultText.textContent = `Berjaya! +${data.points_earned} mata`;
+
+                // Update local data
+                currentStudent.points = data.new_total_points;
+                currentStudent.streak = data.new_streak;
+                localStorage.setItem('currentStudent', JSON.stringify(currentStudent));
+
+                // Update UI
+                document.getElementById('totalPoints').textContent = currentStudent.points;
+                document.getElementById('streakText').textContent = currentStudent.streak + ' Hari';
+                document.getElementById('streakBar').style.width = Math.min(currentStudent.streak * 10, 100) + '%';
+            } catch (err) {
+                showFeedback('Ralat: ' + err.message, 'error');
+            }
+        }
+
+        function showFeedback(message, type = 'success') {
+            const feedback = document.getElementById('scanFeedback');
+            feedback.textContent = message;
+            feedback.classList.remove('hidden');
+            
+            if (type === 'success') {
+                feedback.classList.add('bg-emerald-100', 'text-emerald-700');
+                feedback.classList.remove('bg-red-100', 'text-red-700');
+            } else {
+                feedback.classList.add('bg-red-100', 'text-red-700');
+                feedback.classList.remove('bg-emerald-100', 'text-emerald-700');
+            }
+            
+            setTimeout(() => {
+                feedback.classList.add('hidden');
+            }, 3000);
+        }
+
+        function showLoginForm() {
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        }
+
+        function showRegisterForm() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+        }
+
+        function handleLogout() {
+            currentStudent = null;
+            localStorage.removeItem('currentStudent');
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            showLoginForm();
+        }
+    </script>
+
+</body>
+</html>
